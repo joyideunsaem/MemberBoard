@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<context:property-placeholder location="classpath:database/jdbc.properties" />
+	
+	
+	<!-- DATASOURCE -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	<!-- mybatis 사용을 위한  sqlsessionfactory 객체 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- xml파일 경로를 직접 잡아야 하기 때문에 /로 구분 -->
+		<property name="mapperLocations" value="classpath:com/spring/myapp/**/*.xml" /> <!-- 메퍼.xml경로 -->
+	</bean>
+	
+	<!-- mabatis구현 xml파일을 스캔할 수 있도록 경로 지정 -->
+	<!-- 마이바티스 스캔, 컴포넌트 스캔은 패키지로 사용하기 때문에 .으로 구분 -->
+	<mybatis-spring:scan base-package="com.spring.myapp.member.dao"/> <!-- 경로 : 인터페이스가 있는 패키지 경로 -->
+	<context:component-scan base-package="com.spring.myapp.member" /> <!-- 컴포넌트 스캔을 통한 의존성 주입 준비 -->
+	
+	<mybatis-spring:scan base-package="com.spring.myapp.board.dao"/>
+	<context:component-scan base-package="com.spring.myapp.board" />
+	
+</beans>
